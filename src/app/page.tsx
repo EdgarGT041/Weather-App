@@ -165,6 +165,25 @@ function Weather() {
               </div>
             </Container>
           </div>
+                        <div className="flex gap-4">
+
+                {/* Left */}
+
+                <Container className="w-fit justify-center flex-col px-4 items-center">
+                  <p className="capitalize text-center">{firstData?.weather[0].description}</p>
+                        <WeatherIcon
+                          iconName={getDayOrNightIcon(
+                            firstData?.weather[0].icon ?? "",
+                            firstData?.dt_txt ?? ""
+                          )}
+                        />
+
+                </Container>
+                <Container className="bg-yellow-300/80 px-6 gap-4 justify-between overflow-x-auto"> 
+                </Container>
+                {/* Right */}
+
+              </div>
           </section>
       </main>
     </div>
