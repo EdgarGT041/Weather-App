@@ -81,7 +81,7 @@ export default function Home() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="flex flex-col gap-4 bg-gray-100 min-h-screen">
+      <div className="flex flex-col gap-4 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 min-h-screen">
         <Weather />
       </div>
     </QueryClientProvider>
@@ -126,8 +126,17 @@ function Weather() {
 
   if (isLoading)
     return (
-      <div className="flex items-center min-h-screen justify-center">
-        <p className="animate-bounce">Loading...</p>
+      <div className="flex items-center min-h-screen justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+        <div className="flex flex-col items-center gap-6 p-8 bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl">
+          <div className="relative w-20 h-20">
+            <div className="absolute inset-0 border-4 border-blue-200 rounded-full"></div>
+            <div className="absolute inset-0 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+          </div>
+          <div className="text-center space-y-2">
+            <p className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Loading Weather</p>
+            <p className="text-sm text-gray-600 animate-pulse">Fetching latest data...</p>
+          </div>
+        </div>
       </div>
     );
   if (error)
@@ -139,16 +148,33 @@ function Weather() {
     );
 
   return (
-    <div className="flex flex-col gap-4 bg-gray-100 min-h-screen">
+    <div className="flex flex-col gap-4 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 min-h-screen">
       <Navbar location={data?.city.name} />
       <main className="px-3 max-w-7xl mx-auto flex flex-col gap-9 w-full pb-10 pt-4">
           {/* today data */}
         <section className="space-y-4">
           <div className="space-y-2">
-            <h2 className="flex gap-1 text-2xl items-end">
-              <p>{format(parseISO(firstData?.dt_txt ?? ''),  "EEEE")}</p>
-              <p className="text-lg">({format(parseISO(firstData?.dt_txt ?? ''),  "dd.MM.yyyy")})</p>
-            </h2>
+            <div className="flex gap-3 items-center flex-wrap">
+              <div className="flex items-center gap-3">
+                <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  {format(parseISO(firstData?.dt_txt ?? ''),  "EEEE")}
+                </h2>
+                <span className="text-lg text-gray-500 font-medium">
+                  {format(parseISO(firstData?.dt_txt ?? ''),  "MMM dd, yyyy")}
+                </span>
+              </div>
+              {firstData && (
+                <span className={`px-4 py-1.5 rounded-full text-xs font-bold shadow-md ${
+                  firstData.main.temp > 293 
+                    ? 'bg-gradient-to-r from-orange-400 to-red-500 text-white' 
+                    : firstData.main.temp < 278 
+                    ? 'bg-gradient-to-r from-blue-400 to-cyan-500 text-white'
+                    : 'bg-gradient-to-r from-green-400 to-emerald-500 text-white'
+                }`}>
+                  {firstData.main.temp > 293 ? '☀️ Hot Day' : firstData.main.temp < 278 ? '❄️ Cold Day' : '🌤️ Nice Day'}
+                </span>
+              )}
+            </div>
             <Container className="gap-10 px-6 items-center"> 
               <div className="flex flex-col px-4 ">
 
@@ -176,18 +202,18 @@ function Weather() {
               {/* weather icon and description */}
               <div className="flex gap-10 sm:gap-16 overflow-x-auto w-full justify-between pr-3"> 
                 {data?.list.map((d, index) => (
-                  <div key={index} className=" flex flex-col justify-between gap-2 items-center text-xs font-semibold">
-                    <p className="whitespace-nowrap">
+                  <div key={index} className="flex flex-col justify-between gap-2 items-center text-xs font-semibold cursor-pointer group">
+                    <p className="whitespace-nowrap group-hover:text-blue-600 transition-colors">
                       {format(parseISO(d.dt_txt), "h:mm a")}</p>
-                    <p>
+                    <div className="relative">
                         <WeatherIcon
                           iconName={getDayOrNightIcon(
                             d.weather[0].icon,
                             d.dt_txt
                           )}
                         />
-                         {convertKelvinToCelsius(d?.main.temp ?? 0)}°
-                      </p>  
+                    </div>
+                    <p className="font-bold group-hover:text-blue-600 transition-colors">{convertKelvinToCelsius(d?.main.temp ?? 0)}°</p>  
                   </div>
                   
                 ))}
@@ -198,8 +224,8 @@ function Weather() {
 
                 {/* Left */}
 
-                <Container className="w-fit justify-center flex-col px-4 items-center">
-                  <p className="capitalize text-center">{firstData?.weather[0].description}</p>
+                <Container className="w-fit justify-center flex-col px-4 items-center group">
+                  <p className="capitalize text-center font-semibold text-gray-700 group-hover:text-gray-900 transition-colors">{firstData?.weather[0].description}</p>
                         <WeatherIcon
                           iconName={getDayOrNightIcon(
                             firstData?.weather[0].icon ?? "",
@@ -208,7 +234,7 @@ function Weather() {
                         />
 
                 </Container>
-                <Container className="bg-yellow-300/80 px-6 gap-4 justify-between overflow-x-auto"> 
+                <Container className="bg-gradient-to-br from-amber-200 to-yellow-300 px-6 gap-4 justify-between overflow-x-auto"> 
                 <WeatherDetails visability={metersToKilometers(firstData?.visibility ?? 10000)} 
                 airPressure={`${firstData?.main.pressure} hPa`} 
                 humidity={`${firstData?.main.humidity}%`}
@@ -229,7 +255,10 @@ function Weather() {
           </section>
           <section className="flex w-full flex-col gap-4">
             {/* 7 days forcast data */}
-            <p className="text-2xl">Forcast (7 days)</p>
+            <div className="flex items-center gap-3">
+              <p className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">7-Day Forecast</p>
+              <div className="flex-1 h-px bg-gradient-to-r from-blue-200 to-transparent"></div>
+            </div>
             
               {firstDataForEachDate.map((d, i) => (
                 <ForecastWeatherDetail

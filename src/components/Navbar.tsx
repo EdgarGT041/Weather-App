@@ -87,21 +87,32 @@ export default function Navbar({ location }: Props) {
   }
   return (
     <>
-      <nav className="shadow-sm  sticky top-0 left-0 z-50 bg-white">
-        <div className="h-[80px]     w-full    flex   justify-between items-center  max-w-7xl px-3 mx-auto">
-          <p className="flex items-center justify-center gap-2  ">
-            <h2 className="text-gray-500 text-3xl">Weather</h2>
-            <MdWbSunny className="text-3xl mt-1 text-yellow-300" />
-          </p>
+      <nav className="sticky top-0 left-0 z-50 bg-white/90 backdrop-blur-md shadow-lg border-b border-white/20">
+        <div className="h-[85px] w-full flex justify-between items-center max-w-7xl px-3 mx-auto">
+          <div className="flex items-center justify-center gap-3 group cursor-pointer">
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-600 rounded-full blur-md opacity-0 group-hover:opacity-60 transition-opacity duration-500"></div>
+              <MdWbSunny className="relative text-4xl text-yellow-400 group-hover:text-yellow-300 transition-all duration-300 drop-shadow-lg group-hover:scale-110 group-hover:rotate-12" />
+            </div>
+            <h2 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent group-hover:from-blue-500 group-hover:via-indigo-500 group-hover:to-purple-500 transition-all duration-300">
+              Weather
+            </h2>
+          </div>
           {/*  */}
-          <section className="flex gap-2 items-center">
-            <MdMyLocation
-              title="Your Current Location"
-              onClick={handleCurrentLocation}
-              className="text-2xl  text-gray-400 hover:opacity-80 cursor-pointer"
-            />
-            <MdOutlineLocationOn className="text-3xl" />
-            <p className="text-slate-900/80 text-sm"> {location} </p>
+          <section className="flex gap-3 items-center">
+            <div className="relative group">
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-cyan-500 rounded-full blur-md opacity-0 group-hover:opacity-50 transition-opacity duration-300"></div>
+              <MdMyLocation
+                title="Tu ubicación actual"
+                onClick={handleCurrentLocation}
+                className="relative text-3xl text-gray-500 hover:text-blue-600 hover:scale-110 cursor-pointer transition-all duration-300 drop-shadow-md"
+              />
+            </div>
+            <div className="flex items-center gap-2 bg-gradient-to-r from-blue-50/50 to-purple-50/50 px-3 py-2 rounded-xl border border-blue-100/30 shadow-sm">
+              <MdOutlineLocationOn className="text-2xl text-blue-600" />
+              <p className="text-gray-700 text-sm font-semibold"> {location || "Loading..."} </p>
+            </div>
+            <div className="h-8 w-px bg-gradient-to-b from-blue-200 to-purple-200 mx-1 hidden md:block"></div>
             <div className="relative hidden md:flex">
               {/* SearchBox */}
 
@@ -159,16 +170,22 @@ function SuggestionBox({
   return (
     <>
       {((showSuggestions && suggestions.length > 1) || error) && (
-        <ul className="mb-4 bg-white absolute border top-[44px] left-0 border-gray-300 rounded-md min-w-[200px]  flex flex-col gap-1 py-2 px-2">
+        <ul className="mb-4 bg-white/95 backdrop-blur-md absolute border top-[48px] left-0 border-blue-200/50 rounded-xl min-w-[200px] flex flex-col gap-0.5 py-2 px-2 shadow-xl animate-in fade-in slide-in-from-top-2 duration-200">
           {error && suggestions.length < 1 && (
-            <li className="text-red-500 p-1 "> {error}</li>
+            <li className="text-red-500 p-2.5 text-sm font-medium bg-red-50/50 rounded-lg"> 
+              <span className="flex items-center gap-2">
+                <span className="text-lg">⚠️</span>
+                {error}
+              </span>
+            </li>
           )}
           {suggestions.map((item, i) => (
             <li
               key={i}
               onClick={() => handleSuggestionClick(item)}
-              className="cursor-pointer p-1 rounded   hover:bg-gray-200"
+              className="cursor-pointer px-3 py-2.5 rounded-lg text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:text-blue-700 transition-all duration-200 font-medium text-sm flex items-center gap-2 group"
             >
+              <span className="text-blue-400 group-hover:text-blue-600 transition-colors">📍</span>
               {item}
             </li>
           ))}
