@@ -4,12 +4,15 @@ import Image from "next/image";
 import axios from "axios";
 
 import { useQuery,QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { parseISO, format } from "date-fns";
+import { parseISO, format, fromUnixTime } from "date-fns";
 import Container from "@/components/Container";
 import { convertKelvinToCelsius } from "@/utils/convertKelvinToCelsius";
 import WeatherIcon from "@/components/WeatherIcon";
 import { get } from "http";
 import { getDayOrNightIcon } from "@/utils/getDayOrNightIcon";
+import { metersToKilometers } from "@/utils/metersToKilometers";
+import WeatherDetails from "@/components/WeatherDetails";
+import { convertWindSpeed } from "@/utils/convertWindSpeed";
 
 
 // https://api.openweathermap.org/data/2.5/forecast?q=London&appid=49553306a753297d2bec932a77662cf6&cnt=56
@@ -180,6 +183,20 @@ function Weather() {
 
                 </Container>
                 <Container className="bg-yellow-300/80 px-6 gap-4 justify-between overflow-x-auto"> 
+                <WeatherDetails visability={metersToKilometers(firstData?.visibility ?? 10000)} 
+                airPressure={`${firstData?.main.pressure} hPa`} 
+                humidity={`${firstData?.main.humidity}%`}
+                  sunrise={format(
+                    fromUnixTime(data?.city.sunrise ?? 1768118546),
+                    "H:mm"
+                  )}
+                  sunset={format(
+                    fromUnixTime(data?.city.sunset ?? 1768148030),
+                    "H:mm"
+                  )}
+                  windSpeed={convertWindSpeed(firstData?.wind.speed ?? 6.19)}
+                
+                />
                 </Container>
                 {/* Right */}
 
