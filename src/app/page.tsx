@@ -13,6 +13,7 @@ import { getDayOrNightIcon } from "@/utils/getDayOrNightIcon";
 import { metersToKilometers } from "@/utils/metersToKilometers";
 import WeatherDetails from "@/components/WeatherDetails";
 import { convertWindSpeed } from "@/utils/convertWindSpeed";
+import ForecastWeatherDetail from "@/components/ForecastWeatherDetail";
 
 
 // https://api.openweathermap.org/data/2.5/forecast?q=London&appid=49553306a753297d2bec932a77662cf6&cnt=56
@@ -97,6 +98,23 @@ function Weather() {
   const firstData = data?.list[0];
 
   console.log('data', data);
+
+    const uniqueDates = [
+    ...new Set(
+      data?.list.map(
+        (entry) => new Date(entry.dt * 1000).toISOString().split("T")[0]
+      )
+    )
+  ];
+
+    // Filtering data to get the first entry after 6 AM for each unique date
+  const firstDataForEachDate = uniqueDates.map((date) => {
+    return data?.list.find((entry) => {
+      const entryDate = new Date(entry.dt * 1000).toISOString().split("T")[0];
+      const entryTime = new Date(entry.dt * 1000).getHours();
+      return entryDate === date && entryTime >= 6;
+    });
+  });
 
   if (isLoading)
     return (
@@ -199,8 +217,38 @@ function Weather() {
                 />
                 </Container>
                 {/* Right */}
-
               </div>
+          </section>
+          <section className="flex w-full flex-col gap-4">
+            {/* 7 days forcast data */}
+            <p className="text-2xl">Forcast (7 days)</p>
+            
+              {firstDataForEachDate.map((d, i) => (
+                <ForecastWeatherDetail
+                  key={i}
+                  description={d?.weather[0].description ?? ""}
+                  weatehrIcon={d?.weather[0].icon ?? "01d"}
+                  date={d ? format(parseISO(d.dt_txt), "dd.MM") : ""}
+                  day={d ? format(parseISO(d.dt_txt), "dd.MM") : "EEEE"}
+                  feels_like={d?.main.feels_like ?? 0}
+                  temp={d?.main.temp ?? 0}
+                  temp_max={d?.main.temp_max ?? 0}
+                  temp_min={d?.main.temp_min ?? 0}
+                  airPressure={`${d?.main.pressure} hPa `}
+                  humidity={`${d?.main.humidity}% `}
+                  sunrise={format(
+                    fromUnixTime(data?.city.sunrise ?? 1768118546),
+                    "H:mm"
+                  )}
+                  sunset={format(
+                    fromUnixTime(data?.city.sunset ?? 1768148030),
+                    "H:mm"
+                  )}
+                  visability={`${metersToKilometers(d?.visibility ?? 10000)} `}
+                  windSpeed={`${convertWindSpeed(d?.wind.speed ?? 6.19)} `}
+                />
+              ))}
+
           </section>
       </main>
     </div>
