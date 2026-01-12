@@ -20,7 +20,7 @@ export default function Navbar() {
         <section className='flex gap-2 items-center '>
           <MdMyLocation className='text-2xl text-gray-400 hover:opacity-80 cursor-pointer'/>
           <MdOutlineLocationOn className='text-3xl'/>
-          <p className='text-slate-900/80 text-sm'>mexico</p>
+          <p className='text-slate-900/80 text-sm'>London</p>
           <div>{/* serachBox */}
             <SearchBox value={''} onChange={undefined} onSubmit={undefined}/>
           </div>
@@ -28,4 +28,4 @@ export default function Navbar() {
         </div>
         </nav>
   )
-} 
+}  
