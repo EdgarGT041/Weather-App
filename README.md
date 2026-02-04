@@ -88,7 +88,5 @@ Open [http://localhost:3000](https://www.google.com/search?q=http://localhost:30
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
-## 📄 License
 
-This project is open source and available under the [MIT License](https://www.google.com/search?q=LICENSE).
 
